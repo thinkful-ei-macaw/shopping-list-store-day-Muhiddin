@@ -1,3 +1,4 @@
+'use strict';
 const store = {
   items: [
     { id: cuid(), name: 'apples', checked: false },
@@ -18,13 +19,16 @@ const generateItemElement = function (item) {
 
   return `
     <li class='js-item-element' data-item-id='${item.id}'>
-      ${itemTitle}
+        ${itemTitle}
       <div class='shopping-item-controls'>
         <button class='shopping-item-toggle js-item-toggle'>
           <span class='button-label'>check</span>
         </button>
         <button class='shopping-item-delete js-item-delete'>
           <span class='button-label'>delete</span>
+        </button>
+        <button class='shopping-item-edit js-item-edit'>
+          <span class='button-label'>edit</span>
         </button>
       </div>
     </li>`;
@@ -127,6 +131,27 @@ const handleDeleteItemClicked = function () {
   });
 };
 
+// ===================================================
+// ===================================================
+// EDIT item
+const handleEditItemClicked = function () {
+  $('.js-shopping-list').on('click', '.js-item-edit', event => {
+    event.preventDefault();
+    const id = getItemIdFromElement(event.currentTarget);
+    editItem(id);
+    render();
+  });
+};
+
+const editItem = function(id) {
+  let inputText = prompt('enter value');
+  store.items.forEach(item => { if (item.id === id) {item.name = inputText;}});
+  let item = store.items.find(item => item.id === id);
+  //toggleCheckedForListItem(id);
+  $(`li[data-item-id=${id}]`).html(`${generateItemElement(item)}`);
+};
+// =====================================================
+// =====================================================
 /**
  * Toggles the store.hideCheckedItems property
  */
@@ -160,6 +185,7 @@ const handleShoppingList = function () {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleToggleFilterClick();
+  handleEditItemClicked();
 };
 
 // when the page loads, call `handleShoppingList`
